@@ -1,33 +1,43 @@
 public class Main {
     public static void main(String[] args) {
-        int p = 11, q = 17;
+        int p = 11, q = 13;
         int phi = (p - 1) * (q - 1);
         int n = p * q;
         int e = eGenerator(phi);
 
         int d = privateKey(e, phi);
 
-        int message = 2; //message muss kleiner als n sein
-        int em = encrypt(message, e, n);
-        System.out.println("encrypted: " + em);
-        int dm = decrypt(em, d, n);
-        System.out.println("Decrypted: " + dm);
+        String encryptedMessage = encrypt("Hello World".toCharArray(), e, n);
+        System.out.println("encrypted: " + encryptedMessage);
+        String decryptedMessage = decrypt(encryptedMessage.toCharArray(), d, n);
+        System.out.println("decrypted: " + decryptedMessage);
+        System.out.println("Private Key(" + d + " " + n + ")");
+        System.out.println("Public Key(" + e + " " + n + ")");
     }
 
-    public static int decrypt(int encrypted, int d, int n) {
-        int decrypted = 1;
-        for (int i = 0; i < d; i++) {
-            decrypted = (decrypted * encrypted) % n;
+    public static String encrypt(char[] message, int e, int n) {
+        int encrypted;
+        for (int i = 0; i < message.length; i++) {
+            encrypted = 1;
+            for (int j = 0; j < e; j++) {
+                encrypted = (encrypted * message[i]) % n;
+            }
+            message[i] = (char) encrypted;
         }
-        return decrypted;
+        return new String(message);
     }
 
-    public static int encrypt(int message, int e, int n) {
-        int encrypted = 1;
-        for (int i = 0; i < e; i++) {
-            encrypted = (encrypted * message) % n;
+    public static String decrypt(char[] message, int d, int n) {
+        int decrypted;
+
+        for (int i = 0; i < message.length; i++) {
+            decrypted = 1;
+            for (int j = 0; j < d; j++) {
+                decrypted = (decrypted * message[i]) % n;
+            }
+            message[i] = (char) decrypted;
         }
-        return encrypted;
+        return new String(message);
     }
 
     public static int privateKey(int e, int phi) {
